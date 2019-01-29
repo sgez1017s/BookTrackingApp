@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Student Login";
+}
+
+<div class="jumbotron">
+    <h1>High School Textbook Services</h1>
+    <p class="lead">Textbook services for students, teachers and administrators.</p>
+</div>
+
+@if (TempData["confirm"] != null)
+{
+    <div class="alert alert-success text-center" role="alert">
+        @TempData["confirm"]
+    </div>
+}
+else if (TempData["error"] != null)
+{
+    <div class="alert alert-danger text-center" role="alert">
+        @TempData["error"]
+    </div>
+}
+
+@using (Html.BeginForm("StudentHomePage", "Home", FormMethod.Post))
+{
+<div class="container">
+    <div class="col-md-4">
+    </div>
+        <div class="col-md-4">
+            <div class="form-group row"><h3>Student Login</h3></div>
+            <div class="form-group row">
+                <div style="margin-bottom: 25px" class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    @Html.TextBox("username", null, new { @class = "form-control", @placeholder = "email", @type = "text" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <div style="margin-bottom: 25px" class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    @Html.TextBox("password", null, new { @class = "form-control", @placeholder = "password", @type = "password" })
+                </div>
+            </div>
+            <div class="form-group row">
+                    <div class="col-sm-12 controls">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="submit" id="btnSubmit" value="Login" class="btn btn-success btn-lg" />
+                        </div>
+                        <div class="col-md-4">
+                            <a href='@Url.Action("Index", "Home")' class="btn btn-warning btn-lg">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    <div class="col-md-4">
+    </div>
+</div>
+}

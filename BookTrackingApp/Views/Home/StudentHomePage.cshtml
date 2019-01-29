@@ -1,0 +1,179 @@
+﻿@model BookTrackingApp.ViewModels.StudentInfoViewModel
+
+@{
+    ViewBag.Title = "Student Account";
+}
+
+@Html.HiddenFor(Model => Model.StudentID)
+
+<p></p>
+
+@if (TempData["confirm"] != null)
+{
+    <div class="alert alert-success text-center" role="alert">
+        @TempData["confirm"]
+    </div>
+}
+else if (TempData["error"] != null)
+{
+    <div class="alert alert-danger text-center" role="alert">
+        @TempData["error"]
+    </div>
+}
+
+<div class="pull-right">
+    @Html.ActionLink("Sign Out", "Index", "Home", null, new { @class = "btn btn-warning pull-right" })
+</div>
+
+<Legend>Student Information</Legend>
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Student ID: ")
+            @ViewBag.studentid
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("First Name: ")
+            @ViewBag.firstname
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Last Name: ")
+            @ViewBag.lastname
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Email: ")
+            @ViewBag.email
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Class Enrolled: ")
+            @ViewBag.classone @ViewBag.classtwo @ViewBag.classthree
+        </div>
+    </div>
+</div>
+
+<p></p>
+
+<Legend>Book Order</Legend>
+
+<div class="container">
+        @Html.ActionLink("Search/Request Textbook", "StudentSearchBooks", "Home",
+                                                              new { id = Model.StudentID },
+                                                              new
+                                                              {
+                                                                  @class = "btn btn-success",
+                                                                  @id = "viewButton"
+                                                              })
+@if (Model.OrderListing.Count != 0)
+{
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Order ID</th>
+                    <th>Class</th>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @try
+                {
+
+                    for (int i = 0; i < Model.OrderListing.Count; i++)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(x => x.OrderListing[i].OrderID)</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.OrderListing[i].OBookID).Select(x => x.ClassName).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.OrderListing[i].OBookID).Select(x => x.BookName).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.OrderListing[i].OBookID).Select(x => x.Author).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.OrderListing[i].OBookID).Select(x => x.ISBN).FirstOrDefault()</td>
+                            <td>@Html.DisplayFor(x => x.OrderListing[i].Status)</td>
+                            <td colspan="1">
+                                @if (Model.OrderListing[i].Status == "Pending")
+                                {
+                                @Html.ActionLink("Cancel", "CancelPending", "Home",
+                                              new { stuid = Model.StudentID, bookid = Model.OrderListing[i].OBookID, classid = Model.OrderListing[i].OClassID },
+                                              new
+                                              {
+                                                  @class = "label label-danger",
+                                              })}
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+                catch { }
+            </tbody>
+        </table>
+}
+@if (Model.OrderListing.Count == 0)
+{
+    <div class="text-center">No Available Book Orders</div>
+}
+</div>
+
+<p></p>
+
+<Legend>Checked Out Book</Legend>
+
+<div class="container">
+    @if (Model.CheckedOutListing.Count != 0)
+    {
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Order ID</th>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Due Date</th>
+                    <th>Balance</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @try
+                {
+
+                    for (int i = 0; i < Model.CheckedOutListing.Count; i++)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(x => x.CheckedOutListing[i].OrderID)</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.CheckedOutListing[i].OBookID).Select(x => x.BookName).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.CheckedOutListing[i].OBookID).Select(x => x.Author).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.CheckedOutListing[i].OBookID).Select(x => x.ISBN).FirstOrDefault()</td>
+                            <td>@Model.CheckedOutListing[i].DueDate.ToString().Substring(0, Model.CheckedOutListing[i].DueDate.ToString().Length - 12)</td>
+                            <td>@if (Model.CheckedOutListing[i].Balance != null) {<text>$</text>} @Model.CheckedOutListing[i].Balance.ToString().Substring(0, Model.CheckedOutListing[i].Balance.ToString().Length - 2)</td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+                catch { }
+            </tbody>
+        </table>
+    }
+    @if (Model.CheckedOutListing.Count == 0)
+    {
+        <div class="text-center">No Checked Out Books</div>
+    }
+</div>

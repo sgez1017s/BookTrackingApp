@@ -1,0 +1,81 @@
+﻿@model BookTrackingApp.ViewModels.BookInfoViewModel
+
+@{
+    ViewBag.Title = "Texbooks - Student";
+}
+
+@Html.HiddenFor(Model => Model.stu_id)
+@*@Html.HiddenFor(Model => Model.usernm)
+@Html.HiddenFor(Model => Model.pw)*@
+
+<p></p>
+<div class="pull-right">
+    @Html.ActionLink("Go Back", "StudentHomePage", "Home", new { stuid = Model.stu_id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Sign Out", "Index", "Home", null, new { @class = "btn btn-warning" })
+</div>
+<Legend>Search for Textbooks</Legend>
+
+<div class="container">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-3">
+            @Html.TextBox("SearchString", null, new { @class = "form-control", @placeholder = "Search by Bookname/Author/ISBN", @type = "text" })
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Search" class="btn btn-success" />
+        </div>
+    }
+    <p></p>
+    <table class="table table-striped ">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Book Name</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Quantity</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @try
+            {
+                for (int i = 0; i < Model.BookListing.Count; i++)
+                {
+                    <tr>
+                        <td></td>
+                        <td>@Html.DisplayFor(x => x.BookListing[i].BookName)</td>
+                        <td>@Html.DisplayFor(x => x.BookListing[i].Author)</td>
+                        <td>@Html.DisplayFor(x => x.BookListing[i].ISBN)</td>
+                        <td>@Html.DisplayFor(x => x.BookListing[i].Quantity)</td>
+                        <td colspan="1">
+                            @if (Model.BookListing[i].Quantity != 0)
+                            {
+                                Model.display = true;
+                                for (int j = 0; j < Model.thisStuOrderListing.Count; j++)
+                                {
+                                    if (Model.thisStuOrderListing[j].OBookID == Model.BookListing[i].BookID)
+                                    {
+                                        Model.display = false;
+                                    }
+                                }
+                                if (Model.display == true)
+                                { @Html.ActionLink("Request", "RequestBook", "Home",
+                                                                                    new { stuid = Model.stu_id, bookid = Model.BookListing[i].BookID, classid = Model.BookListing[i].ClassID },
+                                                                                    new
+                                                                                    {
+                                                                                        @class = "label label-success",
+                                                                                    })}
+
+
+                            }
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            }
+            catch { }
+        </tbody>
+    </table>
+</div>

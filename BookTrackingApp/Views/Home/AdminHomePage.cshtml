@@ -1,0 +1,205 @@
+﻿@model BookTrackingApp.ViewModels.AdminViewModels
+
+@{
+    ViewBag.Title = "Admin Account";
+}
+
+@Html.HiddenFor(Model => Model.AdminID)
+
+<p></p>
+
+@if (TempData["confirm"] != null)
+{
+    <div class="alert alert-success text-center" role="alert">
+        @TempData["confirm"]
+    </div>
+}
+else if (TempData["error"] != null)
+{
+    <div class="alert alert-danger text-center" role="alert">
+        @TempData["error"]
+    </div>
+}
+
+<div class="pull-right">
+    @Html.ActionLink("Sign Out", "Index", "Home", null, new { @class = "btn btn-warning pull-right" })
+</div>
+
+<Legend>Admin Information</Legend>
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Admin ID: ")
+            @ViewBag.adminid
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("First Name: ")
+            @ViewBag.firstname
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Last Name: ")
+            @ViewBag.lastname
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Email: ")
+            @ViewBag.email
+        </div>
+    </div>
+</div>
+
+<p></p>
+
+<Legend>Actions</Legend>
+
+@Html.ActionLink("Add Books Using Google API", "addBooks", "Home", new { id = Model.AdminID }, new { @class = "btn btn-primary" })
+@Html.ActionLink("Send Late Notification Email", "sendEmail", "Home", new { admid = Model.AdminID }, new { @class = "btn btn-primary" })
+@Html.ActionLink("Update Balance", "updateBalance", "Home", new { admid = Model.AdminID }, new { @class = "btn btn-primary" })
+
+<p></p>
+@Html.ActionLink("View History Order", "viewHistory", "Home", new { admid = Model.AdminID }, new { @class = "btn btn-info" })
+@Html.ActionLink("View Student Info", "viewStudent", "Home", new { admid = Model.AdminID }, new { @class = "btn btn-info" })
+@Html.ActionLink("View Teacher Info", "viewTeacher", "Home", new { admid = Model.AdminID }, new { @class = "btn btn-info" })
+@Html.ActionLink("View/Edit Book Inventory", "bookInventory", "Home", new { admid = Model.AdminID }, new { @class = "btn btn-info" })
+<p></p>
+
+<Legend>Approved Book Orders</Legend>
+
+<div class="container">
+    @if (Model.ApprovedListing.Count != 0)
+    {
+    <table class="table table-striped ">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Order ID</th>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Book Name</th>
+                <th>ISBN</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @try
+                {
+                    for (int i = 0; i < Model.ApprovedListing.Count; i++)
+                    {
+                <tr>
+                    <td></td>
+                    <td>@Html.DisplayFor(x => x.ApprovedListing[i].OrderID)</td>
+                    <td>@Model.StudentListing.Where(x => x.StudentID == Model.ApprovedListing[i].OStudentID).Select(x => x.StudentID).FirstOrDefault()</td>
+                    <td>
+                        @Model.StudentListing.Where(x => x.StudentID == Model.ApprovedListing[i].OStudentID).Select(x => x.FirstName).FirstOrDefault()
+                        @Model.StudentListing.Where(x => x.StudentID == Model.ApprovedListing[i].OStudentID).Select(x => x.LastName).FirstOrDefault()
+                    </td>
+                    <td>@Model.BookListing.Where(x => x.BookID == Model.ApprovedListing[i].OBookID).Select(x => x.BookName).FirstOrDefault()</td>
+                    <td>@Model.BookListing.Where(x => x.BookID == Model.ApprovedListing[i].OBookID).Select(x => x.ISBN).FirstOrDefault()</td>
+                    <td colspan="1">
+                        @Html.ActionLink("Check Out", "checkoutBook", "Home",
+                                              new { admid = Model.AdminID, orderid = Model.ApprovedListing[i].OrderID },
+                                              new
+                                              {
+                                                  @class = "label label-success",
+                                              })
+                    </td>
+                    <td></td>
+                </tr>
+                    }
+                }
+                catch { }
+        </tbody>
+    </table>
+    }
+
+    @if (Model.ApprovedListing.Count == 0)
+    {
+    <div class="text-center">No Approved Book Orders</div>
+    }
+</div>
+
+<p></p>
+
+<Legend>Checked Out Book Orders</Legend>
+
+<div class="container">
+    @if (Model.CheckedOutListing.Count != 0)
+    {
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Order ID</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Book Name</th>
+                    <th>ISBN</th>
+                    <th>Due Date</th>
+                    <th>Balance</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @try
+                {
+                    for (int i = 0; i < Model.CheckedOutListing.Count; i++)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(x => x.CheckedOutListing[i].OrderID)</td>
+                            <td>@Model.StudentListing.Where(x => x.StudentID == Model.CheckedOutListing[i].OStudentID).Select(x => x.StudentID).FirstOrDefault()</td>
+                            <td>
+                                @Model.StudentListing.Where(x => x.StudentID == Model.CheckedOutListing[i].OStudentID).Select(x => x.FirstName).FirstOrDefault()
+                                @Model.StudentListing.Where(x => x.StudentID == Model.CheckedOutListing[i].OStudentID).Select(x => x.LastName).FirstOrDefault()
+                            </td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.CheckedOutListing[i].OBookID).Select(x => x.BookName).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.CheckedOutListing[i].OBookID).Select(x => x.ISBN).FirstOrDefault()</td>
+                            <td>@Model.CheckedOutListing[i].DueDate.ToString().Substring(0, Model.CheckedOutListing[i].DueDate.ToString().Length - 12)</td>
+                            <td>
+                                @if (Model.CheckedOutListing[i].Balance != null)
+                            {<text>$</text>}
+                            @if (Model.CheckedOutListing[i].Balance != null)
+                            { @Model.CheckedOutListing[i].Balance.ToString().Substring(0, Model.CheckedOutListing[i].Balance.ToString().Length - 2)}
+                        </td>
+                        <td colspan="1">
+                            @if (Model.CheckedOutListing[i].Balance == null)
+                            {
+                                @Html.ActionLink("Return", "returnBook", "Home",
+                   new { admid = Model.AdminID, orderid = Model.CheckedOutListing[i].OrderID },
+                   new
+                   {
+                       @class = "label label-primary",
+                   })}
+                            @if (Model.CheckedOutListing[i].Balance != null)
+                            {
+                                @Html.ActionLink("Paid and Return", "returnBook", "Home",
+                   new { admid = Model.AdminID, orderid = Model.CheckedOutListing[i].OrderID },
+                   new
+                   {
+                       @class = "label label-info",
+                   })}
+                        </td>
+                        <td></td>
+                    </tr>
+                    }
+                }
+                catch { }
+            </tbody>
+        </table>
+    }
+    @if (Model.CheckedOutListing.Count == 0)
+    {
+        <div class="text-center">No Checked Out Book Orders</div>
+    }
+</div>

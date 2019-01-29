@@ -1,0 +1,74 @@
+﻿@model BookTrackingApp.ViewModels.OrderInfoViewModel
+
+@{
+    ViewBag.Title = "History Orders";
+}
+
+@Html.HiddenFor(Model => Model.adm_id)
+
+<p></p>
+
+<div class="pull-right">
+    @Html.ActionLink("Go Back", "AdminHomePage", "Home", new { admid = Model.adm_id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Sign Out", "Index", "Home", null, new { @class = "btn btn-warning" })
+</div>
+
+<Legend>History Orders</Legend>
+
+<div class="container">
+    @if (Model.OrderListing.Count != 0)
+    {
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Order ID</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Book ID</th>
+                    <th>Book Name</th>
+                    <th>ISBN</th>
+                    <th>Teacher Approved</th>
+                    <th>Admin Returned</th>
+                    <th>Return Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @try
+                {
+                    for (int i = 0; i < Model.OrderListing.Count; i++)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(x => x.OrderListing[i].OrderID)</td>
+                            <td>@Model.StudentListing.Where(x => x.StudentID == Model.OrderListing[i].OStudentID).Select(x => x.StudentID).FirstOrDefault()</td>
+                            <td>
+                                @Model.StudentListing.Where(x => x.StudentID == Model.OrderListing[i].OStudentID).Select(x => x.FirstName).FirstOrDefault()
+                                @Model.StudentListing.Where(x => x.StudentID == Model.OrderListing[i].OStudentID).Select(x => x.LastName).FirstOrDefault()
+                            </td>
+                            <td>@Html.DisplayFor(x => x.OrderListing[i].OBookID)</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.OrderListing[i].OBookID).Select(x => x.BookName).FirstOrDefault()</td>
+                            <td>@Model.BookListing.Where(x => x.BookID == Model.OrderListing[i].OBookID).Select(x => x.ISBN).FirstOrDefault()</td>
+                            <td>@Model.TeacherListing.Where(x => x.TeacherID == Model.OrderListing[i].OTeacherID).Select(x => x.FirstName).FirstOrDefault() 
+                            @Model.TeacherListing.Where(x => x.TeacherID == Model.OrderListing[i].OTeacherID).Select(x => x.LastName).FirstOrDefault()
+                            </td>
+                            <td>
+                                @Model.AdminListing.Where(x => x.AdminID == Model.OrderListing[i].OAdminID).Select(x => x.FirstName).FirstOrDefault()
+                            @Model.AdminListing.Where(x => x.AdminID == Model.OrderListing[i].OAdminID).Select(x => x.LastName).FirstOrDefault()
+                        </td>
+                            <td>@Model.OrderListing[i].ReturnDate.ToString().Substring(0, Model.OrderListing[i].ReturnDate.ToString().Length - 12)</td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+                catch { }
+            </tbody>
+        </table>
+    }
+
+    @if (Model.OrderListing.Count == 0)
+    {
+        <div class="text-center">No History Orders</div>
+    }
+</div>

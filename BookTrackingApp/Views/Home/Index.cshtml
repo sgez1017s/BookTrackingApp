@@ -1,0 +1,117 @@
+﻿@model BookTrackingApp.ViewModels.StudentInfoViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>High School Textbook Services</h1>
+    <p class="lead">Textbook services for students, teachers and administrators.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <p>
+            <a href='@Url.Action("StudentLogin", "Home")' class="btn btn-primary btn-lg">
+                STUDENT LOGIN
+            </a>
+        </p>
+        <h3>Getting class started</h3>
+        <p>
+            Access your account with high school student account username and password. In your account, you get to search for textbooks to make a request to borrow and view current checked-out book status.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <p>
+            <a href='@Url.Action("TeacherLogin", "Home")' class="btn btn-primary btn-lg">
+                TEACHER LOGIN
+            </a>
+        </p>
+        <h3>Review book requests</h3>
+        <p>Log in to see students' textbook requests. Review and authorize the requests.</p>
+    </div>
+    <div class="col-md-4">
+        <p>
+            <a href='@Url.Action("AdminLogin", "Home")' class="btn btn-primary btn-lg">
+                ADMIN LOGIN
+            </a>
+        </p>
+        <h3>Manage the system</h3>
+        <p>Log in to manage the textbook inventory, book order and history.</p>
+    </div>
+</div>
+
+
+
+<legend>one</legend>
+
+    <div id="content"></div>
+    <script>
+      function handleResponse(response) {
+      for (var i = 0; i < response.items.length; i++) {
+        var item = response.items[i];
+        // in production code, item.text should have the HTML entities escaped.
+        document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
+          }
+    }
+    </script>
+    <script src="https://www.googleapis.com/books/v1/volumes?q=isbn:9781451648546&callback=handleResponse"></script>
+
+<legend>two</legend>
+
+<a onClick="getBookDetails()" class="btn btn-primary btn-lg">
+    Get Book
+</a>
+
+<a onClick="getJSON()" class="btn btn-primary btn-lg">
+    Test
+</a>
+
+<script>
+    function f1() {
+        //alert("f1 called");
+        var url = "/Home/dispBook?title=xx";
+        window.location.href = url; 
+        //form validation that recalls the page showing with supplied inputs.    
+    }
+
+    function getBookDetails() {
+
+        // Query the book database by ISBN code.
+        
+
+        isbn = "9781451648546"; // Steve Jobs book
+
+        var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
+
+        var response = UrlFetchApp.fetch(url);
+        var results = JSON.parse(response);
+
+        if (results.totalItems) {
+
+             //There'll be only 1 book per ISBN
+            var book = results.items[0];
+
+            var title = (book["volumeInfo"]["title"]);
+            var subtitle = (book["volumeInfo"]["subtitle"]);
+            var authors = (book["volumeInfo"]["authors"]);
+            var pageCount = (book["volumeInfo"]["pageCount"]);
+            var publisher = (book["volumeInfo"]["publisher"]);
+            var publishedDate = (book["volumeInfo"]["publishedDate"]);
+
+            
+        }
+        alert("f2 called");
+        //var urll = "/Home/dispBook?title=xx";
+        //window.location.href = urll; 
+        
+        //alert("f3 called");
+        
+    }
+
+    function getJSON() {
+
+        var url = "/Home/dispBook?title=xx";
+        window.location.href = url; 
+    }
+</script>

@@ -1,0 +1,57 @@
+﻿@model BookTrackingApp.ViewModels.BookInfoViewModel
+
+@{
+    ViewBag.Title = "Add Books";
+}
+
+@Html.HiddenFor(Model => Model.adm_id)
+
+<p></p>
+
+@if (TempData["confirm"] != null)
+{
+    <div class="alert alert-success text-center" role="alert">
+        @TempData["confirm"]
+    </div>
+}
+else if (TempData["error"] != null)
+{
+    <div class="alert alert-danger text-center" role="alert">
+        @TempData["error"]
+    </div>
+}
+
+<div class="pull-right">
+    @Html.ActionLink("Go Back", "AdminHomePage", "Home", new { admid = Model.adm_id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Sign Out", "Index", "Home", null, new { @class = "btn btn-warning" })
+</div>
+
+<Legend>Add Books Using Google API</Legend>
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="span6">
+            @Html.Label("Enter ISBN: ")
+            <input type="text" name="isbn" id="isbn" />
+            <a onClick="ddd()" class="btn btn-success">
+                Search Google API
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="content"></div>
+<script>
+    function handleResponse(response) {
+        for (var i = 0; i < response.items.length; i++) {
+            var item = response.items[i];
+            // in production code, item.text should have the HTML entities escaped.
+            document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
+        }
+        alert("yeah")
+    }
+    function ddd() {
+    }
+    
+</script>
+<script src="https://www.googleapis.com/books/v1/volumes?q=isbn:9781451648546&callback=handleResponse"></script>
